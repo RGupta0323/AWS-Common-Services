@@ -29,6 +29,13 @@ class CdkStack(Stack):
 
         ### Create a Private Subnet ###
         # subnet cidr range = 10.0.0.128/25
+        subnet_config = config.SUBNET_CONFIGURATION["aws-common-services-private-subnet"]
+        private_subnet = ec2.CfnSubnet(
+            self, "aws-common-services-private-subnet", vpc_id=vpc.vpc_id, cidr_block=subnet_config['cidr_block'],
+            availability_zone=subnet_config["availability_zone"],
+            tags=[{'key': 'Name', 'value': "aws-common-services-private-subnet"}],
+            map_public_ip_on_launch=subnet_config['map_public_ip_on_launch'],
+        )
 
         ### Create an internet gateway adn attach to the vpc
 
