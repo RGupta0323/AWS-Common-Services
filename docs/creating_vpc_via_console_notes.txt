@@ -1,0 +1,58 @@
+Notes on how to create a VPC from the console Notes from acloudguru Lab
+
+Acloudguru Lab: https://learn.acloud.guru/handson/5b14955f-1d70-4a0a-9a11-61858fb5e17c
+
+
+
+### STEP 1: CREATE A VPC ###
+
+1) Navigate to VPC in aws console and select "Create vpc from scratch"
+
+2) Put 10.0.0.0/16 as IPv4 CIDR. And Default tenancy as tenancy
+More info on VPC IP address ranges - https://docs.aws.amazon.com/vpc/latest/userguide/vpc-cidr-blocks.html
+
+In general it is reccomended you put the following as IP address ranges:
+10.0.0.0/16
+172.31.0.0/16
+192.168.0.0/20
+
+The above are IPv4 IP address ranges. For simplicity select the option that says "NO IPv6 IP address ranges"
+
+
+### STEP 2: CREATE A PUBLIC SUBNET ###
+1) build a public subnet (make sure that you are assigning valid cidr blocks when creating your subnet)
+IPv4 Cidr block: 10.0.0.0/25
+
+2) after subnet is created, go into subnet settings and click on the box that says "enable auto-assign public IPv4 address"
+
+For subnet cidr ranges - https://docs.aws.amazon.com/vpc/latest/userguide/subnet-sizing.html
+
+
+### STEP 3: CREATE A PRIVATE SUBNET ###
+1) build a private subnet (make sure you're assigning valid cidr blocks)
+    ipv4 cidr: 10.0.0.128/25
+
+
+### STEP 4: CREATE ROUTES & CONFIGURE INTERNET GATEWAY ###
+1) create internet gateway and after its created, click on actionsd and click on "attach to vpc"
+2) create a new route table (for hte public subnet) to direct traffic to public subnet
+    a) Click on route table and click on actions adn then click on "associate a subnet" and click on the public subnet
+    b) Click on "add routes" under routes (while the route table is being selected), for the route put "0.0.0.0/0",
+    for the target put your internet gateway
+
+    c) for private route table, do a subnet association for the private subnet
+Note:
+You may notice there is already a default route table created for you associated with your main network.
+This route allows traffic from the 10.0.0.0/16 network to pass to other nodes within the network,
+but it does not allow traffic to go outside of the network, such as to the public internet.
+Each VPC you create by default is associated with this main route table;
+therefore, the main route table shouldn't allow traffic out to the public internet,
+so we'll create a new one specifically for public internet traffic.
+
+
+
+### STEP 5: LAUNCH EC2 INSTANCE IN A PUBLIC SUBNET ###
+1) Launch an ec2 instance inside your public subnet
+
+### STEP 6: ACCESS EC2 INSTANCE VIA EC2 INSTANCE CONNECT ###
+1) connect your newly created instance using ec2 instance connect
