@@ -19,9 +19,10 @@ class AwsCommonServicesStack(Stack):
 
         ### Create a Public Subnet ###
         # subnet cidr range = 10.0.0.0/25
-        subnet_config = config.SUBNET_CONFIGURATION["aws-common-services-public-subnet"]
+        public_subnet_id = "aws-common-services-public-subnet"
+        subnet_config = config.SUBNET_CONFIGURATION[public_subnet_id]
         public_subnet = ec2.CfnSubnet(
-            self, "aws-common-services-public-subnet", vpc_id=vpc.vpc_id, cidr_block=subnet_config['cidr_block'],
+            self, public_subnet_id, vpc_id=vpc.vpc_id, cidr_block=subnet_config['cidr_block'],
             availability_zone=subnet_config["availability_zone"], tags=[{'key': 'Name', 'value': "aws-common-services-public-subnet"}],
             map_public_ip_on_launch=subnet_config['map_public_ip_on_launch'],
         )
@@ -29,9 +30,10 @@ class AwsCommonServicesStack(Stack):
 
         ### Create a Private Subnet ###
         # subnet cidr range = 10.0.0.128/25
-        subnet_config = config.SUBNET_CONFIGURATION["aws-common-services-private-subnet"]
+        private_subnet_id = "aws-common-services-private-subnet"
+        subnet_config = config.SUBNET_CONFIGURATION[private_subnet_id]
         private_subnet = ec2.CfnSubnet(
-            self, "aws-common-services-private-subnet", vpc_id=vpc.vpc_id, cidr_block=subnet_config['cidr_block'],
+            self, private_subnet_id, vpc_id=vpc.vpc_id, cidr_block=subnet_config['cidr_block'],
             availability_zone=subnet_config["availability_zone"],
             tags=[{'key': 'Name', 'value': "aws-common-services-private-subnet"}],
             map_public_ip_on_launch=subnet_config['map_public_ip_on_launch'],
@@ -43,6 +45,34 @@ class AwsCommonServicesStack(Stack):
                                     internet_gateway_id=igw.ref)
 
 
-        ### Create a public route table for public subnet
 
-        ### Create a private route table for private subnet
+        ### Route Tables ###
+        route_table_id_to_route_table_map = {}
+
+        # public route table for public subnet
+        public_rt_id = config.PUBLIC_ROUTE_TABLE
+        public_rt = ec2.CfnRouteTable(self, id=public_rt_id, vpc_id=vpc.vpc_id,
+                                      tags=[{"key":"Name", "value":"aws-common-services-public-route-table"}]
+                                    )
+        ec2.CfnSubnetRouteTableAssociation(self, "aws-common-services-public-rt-subnet-association",
+                                           route_table_id=public_rt_id,
+                                           subnet_id=public_subnet_id
+                                           )
+        # Create routes for public route table
+
+        # setting a route for internet gateway to hit the internet - this enables the public subnet to hit the
+        # internet via the internet gateway
+        ec2.CfnRoute(self, "public-rt-route", route_table_id=public_rt_id, destination_cidr_block="0.0.0.0/0",
+                        gateway_id=config.INTERNET_GATEWAY
+                     )
+
+
+        # Create a private route table for private subnet
+        private_rt_id = "aws-common-services-private-route-table"
+        private_rt = ec2.CfnRouteTable(self, id=private_rt_id, vpc_id=vpc.vpc_id,
+                                        tags=[{"key":"Name", "value":private_rt_id}]
+                                       )
+        ec2.CfnSubnetRouteTableAssociation(self, "aws-common-services-private-rt-subnet-association",
+                                            route_table_id=private_rt_id,
+                                           subnet_id=private_subnet_id
+                                        )
