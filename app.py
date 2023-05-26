@@ -2,11 +2,11 @@
 import os
 
 import aws_cdk as cdk
-from infra.cdk_stack import CdkStack
+from infra.cdk_stack import AwsCommonServicesStack
 
 
 app = cdk.App()
-CdkStack(app, "CdkStack",
+AwsCommonServicesStack(app, "aws-common-services-stack",
     # If you don't specify 'env', this stack will be environment-agnostic.
     # Account/Region-dependent features and context lookups will not work,
     # but a single synthesized template can be deployed anywhere.

@@ -6,7 +6,7 @@ from aws_cdk import (Stack, aws_lambda, aws_dynamodb, aws_kms,
                      aws_ec2 as ec2,
                      )
 
-class CdkStack(Stack): 
+class AwsCommonServicesStack(Stack):
     def __init__(self, scope: Construct, id: str, **kwargs) -> None: 
         super().__init__(scope, id, **kwargs)
 
@@ -37,7 +37,10 @@ class CdkStack(Stack):
             map_public_ip_on_launch=subnet_config['map_public_ip_on_launch'],
         )
 
-        ### Create an internet gateway adn attach to the vpc
+        ### Create an internet gateway and attach to the vpc
+        igw = ec2.CfnInternetGateway(self, config.INTERNET_GATEWAY)
+        ec2.CfnVPCGatewayAttachment(self, 'aws-common-services-igw', vpc_id=vpc.vpc_id,
+                                    internet_gateway_id=igw.ref)
 
 
         ### Create a public route table for public subnet
