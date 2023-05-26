@@ -1,7 +1,7 @@
 # can rename this file later. 
 import os 
 from constructs import Construct
-import config
+from . import config
 from aws_cdk import (Stack, aws_lambda, aws_dynamodb, aws_kms,
                      aws_ec2 as ec2,
                      )
