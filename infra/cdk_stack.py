@@ -68,7 +68,7 @@ class AwsCommonServicesStack(Stack):
 
 
         # Create a private route table for private subnet
-        private_rt_id = "aws-common-services-private-route-table"
+        private_rt_id = "rtb-aws-common-services-private-route-table"
         private_rt = ec2.CfnRouteTable(self, id=private_rt_id, vpc_id=vpc.vpc_id,
                                         tags=[{"key":"Name", "value":private_rt_id}]
                                        )
