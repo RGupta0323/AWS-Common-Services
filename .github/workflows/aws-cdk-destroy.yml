@@ -37,7 +37,7 @@ jobs:
         run: npm install xhr2
 
       - name: Configure AWS Credentials (Raw ACcount)
-        uses: aws-actions/configure-aws-credentials@v1
+        uses: aws-actions/configure-aws-credentials@v1-node16
         with:
           role-to-assume: arn:aws:iam::783978466054:role/GitHubOIDCRole
           aws-region: us-east-1
