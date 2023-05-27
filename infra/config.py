@@ -10,7 +10,7 @@ KEY_PAIR_NAME = 'aws-common-services-us-east-1-key'
 REGION = 'us-east-1'
 
 # route tables
-PUBLIC_ROUTE_TABLE = 'rtb-0ad2be93946c6be65dhfhgj'
+PUBLIC_ROUTE_TABLE = 'rtb-2bf93364'
 
 ROUTE_TABLES_ID_TO_ROUTES_MAP = {
     PUBLIC_ROUTE_TABLE: [

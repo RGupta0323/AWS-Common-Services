@@ -55,7 +55,7 @@ class AwsCommonServicesStack(Stack):
                                       tags=[{"key":"Name", "value":"aws-common-services-public-route-table"}]
                                     )
         ec2.CfnSubnetRouteTableAssociation(self, "aws-common-services-public-rt-subnet-association",
-                                           route_table_id=public_rt_id,
+                                           route_table_id=public_rt.ref,
                                            subnet_id=public_subnet_id
                                            )
         # Create routes for public route table
