@@ -73,6 +73,6 @@ class AwsCommonServicesStack(Stack):
                                         tags=[{"key":"Name", "value":private_rt_id}]
                                        )
         ec2.CfnSubnetRouteTableAssociation(self, "aws-common-services-private-rt-subnet-association",
-                                            route_table_id=private_rt_id,
+                                            route_table_id=private_rt.ref,
                                            subnet_id=private_subnet_id
                                         )
