@@ -63,7 +63,7 @@ class AwsCommonServicesStack(Stack):
         # setting a route for internet gateway to hit the internet - this enables the public subnet to hit the
         # internet via the internet gateway
         ec2.CfnRoute(self, "public-rt-route", route_table_id=public_rt_id, destination_cidr_block="0.0.0.0/0",
-                        gateway_id=config.INTERNET_GATEWAY
+                        gateway_id=igw.ref
                      )
 
 
