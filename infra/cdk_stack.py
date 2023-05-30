@@ -22,7 +22,7 @@ class AwsCommonServicesStack(Stack):
         public_subnet_id = "aws-common-services-public-subnet"
         subnet_config = config.SUBNET_CONFIGURATION[public_subnet_id]
         public_subnet = ec2.CfnSubnet(
-            self, public_subnet_id, vpc_id=vpc.vpc_id, cidr_block=subnet_config['cidr_block'],
+            self, public_subnet_id, vpc_id=vpc.vpc_id, cidr_block="10.0.0.0/25",
             availability_zone=subnet_config["availability_zone"], tags=[{'key': 'Name', 'value': "aws-common-services-public-subnet"}],
             map_public_ip_on_launch=subnet_config['map_public_ip_on_launch'],
         )
