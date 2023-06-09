@@ -48,10 +48,11 @@ class AwsCommonServicesStack(Stack):
         )
         """
         ### Create an internet gateway and attach to the vpc
+        '''
         igw = ec2.CfnInternetGateway(self, config.INTERNET_GATEWAY)
         ec2.CfnVPCGatewayAttachment(self, 'aws-common-services-igw', vpc_id=vpc.vpc_id,
                                     internet_gateway_id=igw.ref)
-
+        '''
 
 
         ### Route Tables ###
