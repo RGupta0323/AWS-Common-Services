@@ -14,7 +14,7 @@ class AwsCommonServicesStack(Stack):
 
         ### Create a VPC ###
         # vpc cidr range = 10.0.0.0/16
-        vpc = ec2.Vpc(self, "AWS-Common-Services-VPC", cidr="10.0.0.0/16",
+        vpc = ec2.Vpc(self, "AWS-Common-Services-VPC", cidr="192.168.0.0/24",
                       vpc_name="AWS-Common-Services-VPC")
 
         ### Create a Public Subnet ###
@@ -22,7 +22,7 @@ class AwsCommonServicesStack(Stack):
         public_subnet_id = "aws-common-services-public-subnet"
         subnet_config = config.SUBNET_CONFIGURATION[public_subnet_id]
         public_subnet = ec2.CfnSubnet(
-            self, public_subnet_id, vpc_id=vpc.vpc_id, cidr_block="10.0.1.0/24",
+            self, public_subnet_id, vpc_id=vpc.vpc_id, cidr_block="192.168.0.127/25",
             availability_zone=subnet_config["availability_zone"], tags=[{'key': 'Name', 'value': "aws-common-services-public-subnet"}],
             map_public_ip_on_launch=subnet_config['map_public_ip_on_launch'],
         )
@@ -33,7 +33,7 @@ class AwsCommonServicesStack(Stack):
         private_subnet_id = "aws-common-services-private-subnet"
         subnet_config = config.SUBNET_CONFIGURATION[private_subnet_id]
         private_subnet = ec2.CfnSubnet(
-            self, private_subnet_id, vpc_id=vpc.vpc_id, cidr_block="10.0.1.0/24",
+            self, private_subnet_id, vpc_id=vpc.vpc_id, cidr_block="192.168.0.128/25",
             availability_zone=subnet_config["availability_zone"],
             tags=[{'key': 'Name', 'value': "aws-common-services-private-subnet"}],
             map_public_ip_on_launch=subnet_config['map_public_ip_on_launch'],
@@ -76,3 +76,8 @@ class AwsCommonServicesStack(Stack):
                                             route_table_id=private_rt.ref,
                                            subnet_id=private_subnet_id
                                         )
+
+        ### Route53 Domain Name ###
+
+
+        ### API Gateway (Used to host applications) ###
