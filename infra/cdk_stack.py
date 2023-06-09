@@ -17,9 +17,10 @@ class AwsCommonServicesStack(Stack):
         vpc = ec2.Vpc(self, "AWS-Common-Services-VPC",
                       cidr="192.168.0.0/16",
                       vpc_name="AWS-Common-Services-VPC",
+                      nat_gateways=0,
                       subnet_configuration=[
                             {'cidrMask': 24, 'name': 'ingress', 'subnetType': ec2.SubnetType.PUBLIC},
-                            {'cidrMask': 24, 'name': 'application', 'subnetType': ec2.SubnetType.PRIVATE_WITH_EGRESS}
+                            {'cidrMask': 24, 'name': 'application', 'subnetType': ec2.SubnetType.PRIVATE_ISOLATED}
                         ]
                     )
 
