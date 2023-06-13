@@ -35,7 +35,6 @@ class AwsCommonServicesStack(Stack):
         route53.NsRecord(self, "NSRecord",
                          zone=public_hosted_zone,
                          record_name="BrohanNSRecord",
-                         values=["ns-1.awsdns.co.uk.", "ns-2.awsdns.com."
-                                 ],
+                         values=domain_name_ns_servers,
                          ttl=Duration.minutes(30)
                          )
