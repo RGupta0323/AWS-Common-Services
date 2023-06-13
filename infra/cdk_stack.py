@@ -2,8 +2,8 @@
 import os 
 from constructs import Construct
 from . import config
-from aws_cdk import (Stack, aws_lambda, aws_dynamodb, aws_kms,
-                     aws_ec2 as ec2,
+from aws_cdk import (Stack, Duration, aws_lambda, aws_dynamodb, aws_kms,
+                     aws_ec2 as ec2, aws_route53 as route53
                      )
 
 class AwsCommonServicesStack(Stack):
@@ -26,6 +26,16 @@ class AwsCommonServicesStack(Stack):
 
 
         ### Route53 Domain Name ###
-
-
-        ### API Gateway (Used to host applications) ###
+        domain_name = "thebrohan.net"
+        domain_name_ns_servers = ["ns-1918.awsdns-47.co.uk", "ns-278.awsdns-34.com", "ns-1507.awsdns-60.org",
+                                    "ns-686.awsdns-21.net"]
+        public_hosted_zone = route53.PublicHostedZone(self, "PublicHostedZone",
+                                 zone_name=domain_name
+                                 )
+        route53.NsRecord(self, "NSRecord",
+                         zone=public_hosted_zone,
+                         record_name="BrohanNSRecord",
+                         values=["ns-1.awsdns.co.uk.", "ns-2.awsdns.com."
+                                 ],
+                         ttl=Duration.minutes(30)
+                         )
