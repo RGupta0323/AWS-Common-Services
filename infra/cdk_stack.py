@@ -26,7 +26,7 @@ class AwsCommonServicesStack(Stack):
 
 
         ### Route53 Domain Name ###
-        domain_name = "thebrohan.net"
+        """domain_name = "thebrohan.net"
         domain_name_ns_servers = ["ns-1918.awsdns-47.co.uk", "ns-278.awsdns-34.com", "ns-1507.awsdns-60.org",
                                     "ns-686.awsdns-21.net"]
         public_hosted_zone = route53.PublicHostedZone(self, "PublicHostedZone",
@@ -37,4 +37,10 @@ class AwsCommonServicesStack(Stack):
                          record_name="BrohanNSRecord",
                          values=domain_name_ns_servers,
                          ttl=Duration.minutes(30)
-                         )
+                         )"""
+
+        ### API Gateway ###
+
+        # domain name is going to hit this api gateway.
+        # the api gateway then will have links to all the apps you would like others to see (not all the apps need to dhave this)
+        # once this is done.
