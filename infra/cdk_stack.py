@@ -4,7 +4,7 @@ import boto3
 from aws_cdk import (Stack, Duration, aws_lambda, aws_dynamodb, aws_kms,
                      aws_ec2 as ec2, aws_route53 as route53, aws_apigateway as apigw,
                     aws_certificatemanager as acm, aws_wafv2 as aws_wafv2, aws_waf as aws_waf,
-                    aws_wafregional as wafregional
+                    aws_wafregional as wafregional, aws_route53_targets as targets
                      )
 
 class AwsCommonServicesStack(Stack):
@@ -31,7 +31,6 @@ class AwsCommonServicesStack(Stack):
         domain_name_ns_servers = ["ns-1918.awsdns-47.co.uk", "ns-278.awsdns-34.com", "ns-1507.awsdns-60.org",
                                     "ns-686.awsdns-21.net"]
         public_hosted_zone_id = "Z081614924Y6OKJ2LG5JH"
-        #public_hosted_zone = route53.HostedZone.from_lookup(self, "PublicHostedZone", domain_name=domain_name)
         public_hosted_zone = route53.HostedZone.from_hosted_zone_attributes(self, "PublicHostedZone",
                                                        zone_name=domain_name,
                                                        hosted_zone_id=public_hosted_zone_id
@@ -42,16 +41,21 @@ class AwsCommonServicesStack(Stack):
                          values=domain_name_ns_servers,
                          ttl=Duration.minutes(30)
                          )
+
+
+
         acm_cert = acm.Certificate(self, f"{domain_name}_ACM_Certificate",
                                     domain_name=domain_name,
                                     certificate_name=f"{domain_name}_ACM_Certificate",
                                     validation=acm.CertificateValidation.from_dns(public_hosted_zone)
                                 )
+
         ### Generic Status Lambda to make sure api gateway is up and running ###
         status_lambda = aws_lambda.Function(self, id="AWS-Common-Services-Status-Lambda",
                                     code=aws_lambda.Code.from_asset("./software/src/lambda_functions/"),
                                     handler="status_lambda.lambda_handler",
                                     runtime=aws_lambda.Runtime.PYTHON_3_9)
+
         ### API Gateway ###
         api = apigw.LambdaRestApi(self, "APIGateway",
                                   domain_name=apigw.DomainNameOptions(
@@ -66,24 +70,9 @@ class AwsCommonServicesStack(Stack):
                                 )
         api_endpoint = api.root
         api_endpoint.add_method("GET", apigw.LambdaIntegration(status_lambda))
-        # WAF for API gateway - costs $5.00 per month plus $1.00 per rule (comment out waf code for now)
-        """
-        waf = aws_waf.CfnWebACL(self, "AWS-Common-Services-APIGateway", name="AWS-Common-Services-APIGateway",
-                                default_action=aws_waf.CfnWebACL.WafActionProperty(
-                                    type="type"
-                                ),
-                                metric_name="AWS-Common-Services-WAF-Metric",
 
-                                # the properties below are optional
-                                rules=[aws_waf.CfnWebACL.ActivatedRuleProperty(
-                                    priority=123,
-                                    rule_id="ruleId",
-
-                                    # the properties below are optional
-                                    action=aws_waf.CfnWebACL.WafActionProperty(
-                                        type="type"
-                                    )
-                                )]
-                            )
-        # waf_association = wafregional.CfnWebACLAssociation()
-        """
+        # A record for route53 
+        route53.ARecord(self, "AliasRecord",
+                            zone=public_hosted_zone,
+                            target=route53.RecordTarget.from_alias(targets.ApiGateway(api))
+                        )
