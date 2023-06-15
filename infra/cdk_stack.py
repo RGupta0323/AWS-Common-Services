@@ -61,7 +61,7 @@ class AwsCommonServicesStack(Stack):
                                   handler=status_lambda
                                 )
         # WAF for API gateway
-        waf = aws_waf.CfnWebAcl(self, "AWS-Common-Services-APIGateway", name="AWS-Common-Services-APIGateway",
+        waf = aws_wafregional.CfnWebAcl(self, "AWS-Common-Services-APIGateway", name="AWS-Common-Services-APIGateway",
                                 default_action=aws_waf.CfnWebACL.DefaultActionProperty(
                                     allow=aws_waf.CfnWebACL.AllowActionProperty(
                                         custom_request_handling=aws_waf.CfnWebACL.CustomRequestHandlingProperty(
@@ -84,4 +84,4 @@ class AwsCommonServicesStack(Stack):
                                     sampled_requests_enabled=False
                                 )
                             )
-        waf_association = wafregional.CfnWebACLAssociation()
+        # waf_association = wafregional.CfnWebACLAssociation()
