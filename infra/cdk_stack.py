@@ -58,8 +58,14 @@ class AwsCommonServicesStack(Stack):
                                     certificate=acm_cert,
                                     domain_name=domain_name
                                   ),
-                                  handler=status_lambda
+                                  handler=status_lambda,
+                                  default_cors_preflight_options=apigw.CorsOptions(
+                                      allow_origins=apigw.Cors.ALL_ORIGINS,
+                                      allow_methods=apigw.Cors.ALL_METHODS
+                                  )
                                 )
+        api_endpoint = api.root
+        api_endpoint.add_method("GET", apigw.LambdaIntegration(status_lambda))
         # WAF for API gateway - costs $5.00 per month plus $1.00 per rule (comment out waf code for now)
         """
         waf = aws_waf.CfnWebACL(self, "AWS-Common-Services-APIGateway", name="AWS-Common-Services-APIGateway",
