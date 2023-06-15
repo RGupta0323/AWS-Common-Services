@@ -3,7 +3,8 @@ from constructs import Construct
 import boto3
 from aws_cdk import (Stack, Duration, aws_lambda, aws_dynamodb, aws_kms,
                      aws_ec2 as ec2, aws_route53 as route53, aws_apigateway as apigw,
-                    aws_certificatemanager as acm
+                    aws_certificatemanager as acm, aws_wafv2 as aws_waf,
+                    aws_wafregional as wafregional
                      )
 
 class AwsCommonServicesStack(Stack):
@@ -60,3 +61,27 @@ class AwsCommonServicesStack(Stack):
                                   handler=status_lambda
                                 )
         # WAF for API gateway
+        waf = aws_waf.CfnWebAcl(self, "AWS-Common-Services-APIGateway", name="AWS-Common-Services-APIGateway",
+                                default_action=aws_waf.CfnWebACL.DefaultActionProperty(
+                                    allow=aws_waf.CfnWebACL.AllowActionProperty(
+                                        custom_request_handling=aws_waf.CfnWebACL.CustomRequestHandlingProperty(
+                                            insert_headers=[aws_waf.CfnWebACL.CustomHTTPHeaderProperty(
+                                                name="name",
+                                                value="value"
+                                            )]
+                                        )
+                                    ),
+                                    block=aws_waf.CfnWebACL.BlockActionProperty(
+                                        custom_response=aws_waf.CfnWebACL.CustomResponseProperty(
+                                            response_code=123,
+                                        )
+                                    )
+                                ),
+                                scope="regional".upper(),
+                                visibility_config=aws_waf.CfnWebACL.VisibilityConfigProperty(
+                                    cloud_watch_metrics_enabled=True,
+                                    metric_name="AWSCommonServicesAPIGatewayMetric",
+                                    sampled_requests_enabled=False
+                                )
+                            )
+        waf_association = wafregional.CfnWebACLAssociation()
