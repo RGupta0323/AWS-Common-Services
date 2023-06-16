@@ -1,7 +1,36 @@
 
-# Welcome to your CDK Python project!
+# AWS Common Services Repo 
+This repo creates multiple common services that will be used across my repos going forward. 
+This prevents code from being duplicated across repositories and makes setting up new repositories simpler and easier since you most of the basic 
+services have been already created for you. 
 
-This is a blank project for CDK development with Python.
+
+## Services Created 
+## VPC 
+> 
+> A VPC has been created with 6 total subnets (3 public and 3 private). 
+> The subnets are spread across 3 AZs and each subnet has their own route table attached. 
+> Internet gateway has been created for the public subnet's route table. 
+
+## Route53 Domain name 
+> 
+> Domain name: thebrohan.net (Fun fact people in high school used to call me this!) 
+> This domain name has been created with the needed public hosted zone, NS records & A records. 
+> It has been linked to API gateway. 
+
+## ACM 
+> 
+> Created appropriate ACM cert to attach to API gateway. 
+
+## API Gateway 
+> 
+> This has been created with one endpoint (thebrohan.net/) will return a 200 status code and a "success!" message. This is just the status lambda to get the health of api gateway. 
+
+## Status Lambda 
+> 
+> Lambda function is been created to return a 200 status code to ensure that the api gateway is up and running. 
+
+
 
 The `cdk.json` file tells the CDK Toolkit how to execute your app.
 
